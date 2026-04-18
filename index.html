@@ -410,6 +410,48 @@
       grid-template-columns: 1fr;
     }
 
+    .share-menu {
+      position: fixed;
+      inset: 0;
+      background: rgba(25, 3, 3, 0.58);
+      display: grid;
+      place-items: center;
+      padding: 1rem;
+      z-index: 23;
+    }
+
+    .share-menu[hidden] {
+      display: none;
+    }
+
+    .share-card {
+      width: min(100%, 420px);
+      background: #fff9f7;
+      border: 2px solid #f3c5bc;
+      border-radius: 16px;
+      box-shadow: 0 14px 32px rgba(60, 9, 9, 0.28);
+      padding: 0.95rem;
+    }
+
+    .share-card h3 {
+      margin: 0;
+      color: #7c1111;
+      font-size: 1.03rem;
+    }
+
+    .share-card p {
+      margin: 0.38rem 0 0.7rem;
+      color: #603232;
+      font-size: 0.84rem;
+      line-height: 1.35;
+    }
+
+    .share-actions {
+      display: grid;
+      gap: 0.48rem;
+      grid-template-columns: 1fr;
+    }
+
     .install-help {
       position: fixed;
       inset: 0;
@@ -762,6 +804,19 @@
     </div>
   </section>
 
+  <section id="shareMenu" class="share-menu" hidden aria-label="Share options">
+    <div class="share-card">
+      <h3>Share CUT Rewards</h3>
+      <p>Choose how you want to send this app to friends and family.</p>
+      <div class="share-actions">
+        <button id="shareEmailBtn" class="btn btn-primary" type="button">Email</button>
+        <button id="shareFacebookBtn" class="btn btn-primary" type="button">Facebook</button>
+        <button id="shareCopyBtn" class="btn btn-ghost" type="button">Copy Link</button>
+        <button id="shareCloseBtn" class="btn btn-ghost" type="button">Cancel</button>
+      </div>
+    </div>
+  </section>
+
   <script>
     const STORAGE_KEY = 'cut-theatre-customer-wallet-v1';
     const PEAK_OFFER_SEEN_KEY = 'cut-theatre-peak-offer-seen-v1';
@@ -798,7 +853,12 @@
       closeInstallHelp: document.getElementById('closeInstallHelp'),
       peakOfferModal: document.getElementById('peakOfferModal'),
       claimPeakOffer: document.getElementById('claimPeakOffer'),
-      closePeakOffer: document.getElementById('closePeakOffer')
+      closePeakOffer: document.getElementById('closePeakOffer'),
+      shareMenu: document.getElementById('shareMenu'),
+      shareEmailBtn: document.getElementById('shareEmailBtn'),
+      shareFacebookBtn: document.getElementById('shareFacebookBtn'),
+      shareCopyBtn: document.getElementById('shareCopyBtn'),
+      shareCloseBtn: document.getElementById('shareCloseBtn')
     };
 
     let installPromptEvent = null;
@@ -1138,34 +1198,48 @@
     });
 
     refs.shareBtn.addEventListener('click', async () => {
-      const shareData = {
-        title: 'CUT Theatre Rewards',
-        text: 'Earn points and claim Peak Window BOGO offers at CUT Theatre Rewards.',
-        url: window.location.href
-      };
+      refs.shareMenu.hidden = false;
+    });
 
-      if (navigator.share) {
-        try {
-          await navigator.share(shareData);
-          setStatus('Thanks for sharing CUT Rewards.', 'good');
-          return;
-        } catch {
-          // If user dismisses native share sheet, silently continue to fallback.
-        }
-      }
+    refs.shareEmailBtn.addEventListener('click', () => {
+      const url = window.location.href;
+      const subject = encodeURIComponent('Check out CUT Theatre Rewards');
+      const body = encodeURIComponent(`Earn points and claim Peak Window BOGO offers at CUT Theatre Rewards: ${url}`);
+      window.location.href = `mailto:?subject=${subject}&body=${body}`;
+      refs.shareMenu.hidden = true;
+      setStatus('Email share opened.', 'good');
+    });
 
+    refs.shareFacebookBtn.addEventListener('click', () => {
+      const url = encodeURIComponent(window.location.href);
+      window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank', 'noopener,noreferrer');
+      refs.shareMenu.hidden = true;
+      setStatus('Facebook share opened.', 'good');
+    });
+
+    refs.shareCopyBtn.addEventListener('click', async () => {
+      const url = window.location.href;
       if (navigator.clipboard && navigator.clipboard.writeText) {
         try {
-          await navigator.clipboard.writeText(shareData.url);
-          setStatus('Share link copied to clipboard.');
-          return;
+          await navigator.clipboard.writeText(url);
+          setStatus('Share link copied to clipboard.', 'good');
         } catch {
-          setStatus('Share not available right now. Please copy the URL from your browser.', 'bad');
-          return;
+          setStatus('Could not copy link. Please copy from browser address bar.', 'bad');
         }
+      } else {
+        setStatus('Copy link not supported on this device.', 'bad');
       }
+      refs.shareMenu.hidden = true;
+    });
 
-      setStatus('Share not available on this device. Please copy the URL from your browser.');
+    refs.shareCloseBtn.addEventListener('click', () => {
+      refs.shareMenu.hidden = true;
+    });
+
+    refs.shareMenu.addEventListener('click', (event) => {
+      if (event.target === refs.shareMenu) {
+        refs.shareMenu.hidden = true;
+      }
     });
 
     window.addEventListener('appinstalled', () => {
