@@ -130,6 +130,35 @@
       font-size: 0.88rem;
     }
 
+    .social-row {
+      margin-top: 0.8rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+    }
+
+    .social-btn {
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.38rem 0.62rem;
+      border-radius: 999px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.34);
+      background: rgba(8, 20, 38, 0.24);
+      backdrop-filter: blur(2px);
+      transition: transform 0.15s ease, background 0.2s ease;
+    }
+
+    .social-btn:hover {
+      transform: translateY(-1px);
+      background: rgba(8, 20, 38, 0.4);
+    }
+
     .hero-buttons {
       margin-top: 0.75rem;
       display: grid;
@@ -538,6 +567,12 @@
       </div>
       <h1>CUT Theatre Rewards</h1>
       <p>CUT! Customer loyalty app for earning points, redeeming incentives and bonuses! Leave the 380 traffic behind. CUT is not just a theater - it's a restaurant experience.</p>
+      <div class="social-row" aria-label="CUT Theatre social media links">
+        <a class="social-btn" href="https://www.instagram.com" target="_blank" rel="noopener noreferrer">Instagram</a>
+        <a class="social-btn" href="https://www.facebook.com" target="_blank" rel="noopener noreferrer">Facebook</a>
+        <a class="social-btn" href="https://www.tiktok.com" target="_blank" rel="noopener noreferrer">TikTok</a>
+        <a class="social-btn" href="https://www.youtube.com" target="_blank" rel="noopener noreferrer">YouTube</a>
+      </div>
       <div class="hero-buttons"></div>
     </section>
 
