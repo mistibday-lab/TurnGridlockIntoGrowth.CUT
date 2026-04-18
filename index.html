@@ -89,42 +89,6 @@
       pointer-events: none;
     }
 
-    .hero-art {
-      position: absolute;
-      right: 0.8rem;
-      top: 0.7rem;
-      display: flex;
-      gap: 0.35rem;
-      opacity: 0.9;
-      pointer-events: none;
-    }
-
-    .movie-glyph {
-      width: 40px;
-      height: 40px;
-      border-radius: 10px;
-      background: linear-gradient(145deg, rgba(255, 255, 255, 0.32), rgba(255, 255, 255, 0.14));
-      border: 1px solid rgba(255, 255, 255, 0.35);
-      display: grid;
-      place-items: center;
-      font-size: 0.74rem;
-      font-weight: 700;
-      color: #fff;
-    }
-
-    .movie-glyph.ticket {
-      transform: rotate(-12deg);
-    }
-
-    .movie-glyph.reel {
-      border-radius: 999px;
-      transform: rotate(8deg);
-    }
-
-    .movie-glyph.pop {
-      transform: rotate(-4deg);
-    }
-
     .hero h1 {
       margin: 0;
       font-family: "Bangers", "Trebuchet MS", cursive;
@@ -389,6 +353,63 @@
       color: #7f1f41;
     }
 
+    .peak-offer {
+      position: fixed;
+      inset: 0;
+      background: rgba(46, 5, 5, 0.64);
+      display: grid;
+      place-items: center;
+      padding: 1rem;
+      z-index: 22;
+    }
+
+    .peak-offer[hidden] {
+      display: none;
+    }
+
+    .peak-card {
+      width: min(100%, 470px);
+      border-radius: 18px;
+      border: 2px solid #ffd2c6;
+      background: linear-gradient(160deg, #fff5f1, #ffe3da);
+      box-shadow: 0 16px 36px rgba(62, 7, 7, 0.34);
+      padding: 1rem;
+    }
+
+    .peak-title {
+      margin: 0;
+      font-family: "Bangers", "Trebuchet MS", cursive;
+      font-size: 1.55rem;
+      letter-spacing: 0.04em;
+      color: #9f0f0f;
+    }
+
+    .peak-copy {
+      margin: 0.4rem 0 0;
+      color: #5c1e1e;
+      line-height: 1.4;
+      font-size: 0.9rem;
+    }
+
+    .peak-highlight {
+      margin-top: 0.7rem;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #ff3535, #ba1313);
+      color: #fff;
+      padding: 0.7rem;
+      font-weight: 800;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .peak-actions {
+      margin-top: 0.75rem;
+      display: grid;
+      gap: 0.5rem;
+      grid-template-columns: 1fr;
+    }
+
     .install-help {
       position: fixed;
       inset: 0;
@@ -544,10 +565,6 @@
         font-size: 0.99rem;
       }
 
-      .hero-art {
-        right: 1rem;
-      }
-
       .hero-buttons {
         grid-template-columns: auto auto;
         justify-content: start;
@@ -579,19 +596,14 @@
 <body>
   <main class="app" id="cut-customer-loyalty-app" aria-label="CUT Theatre customer rewards app">
     <section class="hero">
-      <div class="hero-art" aria-hidden="true">
-        <div class="movie-glyph ticket">TIX</div>
-        <div class="movie-glyph reel">FILM</div>
-        <div class="movie-glyph pop">POP</div>
-      </div>
       <h1>CUT Theatre Rewards</h1>
       <p>CUT! Customer loyalty app for earning points, redeeming incentives and bonuses! Leave the 380 traffic behind. CUT is not just a theater - it's a restaurant experience.</p>
       <img class="hero-visual" src="./cinema-graphic.svg" alt="Movie reel, drink, and popcorn graphic" />
       <div class="social-row" aria-label="CUT Theatre social media links">
-        <a class="social-btn" href="https://www.instagram.com" target="_blank" rel="noopener noreferrer">Instagram</a>
-        <a class="social-btn" href="https://www.facebook.com" target="_blank" rel="noopener noreferrer">Facebook</a>
-        <a class="social-btn" href="https://www.tiktok.com" target="_blank" rel="noopener noreferrer">TikTok</a>
-        <a class="social-btn" href="https://www.youtube.com" target="_blank" rel="noopener noreferrer">YouTube</a>
+        <a class="social-btn" href="https://instagram.com/cinemark/" target="_blank" rel="noopener noreferrer">Instagram</a>
+        <a class="social-btn" href="https://facebook.com/cinemark" target="_blank" rel="noopener noreferrer">Facebook</a>
+        <a class="social-btn" href="https://x.com/cinemark" target="_blank" rel="noopener noreferrer">X</a>
+        <a class="social-btn" href="https://youtube.com/cinemark" target="_blank" rel="noopener noreferrer">YouTube</a>
       </div>
       <div class="hero-buttons"></div>
     </section>
@@ -736,8 +748,22 @@
     </div>
   </section>
 
+  <section id="peakOfferModal" class="peak-offer" hidden aria-label="Peak Window Incentive Offer">
+    <div class="peak-card">
+      <h3 class="peak-title">Skip US-380 Rush: Peak Window Bonus</h3>
+      <p class="peak-copy">Check in during the 4-7 PM Peak Window and enjoy faster flow at CUT with your loyalty bonus.</p>
+      <div class="peak-highlight">BOGO Movie Ticket Offer</div>
+      <p class="peak-copy">Tap claim to add your Peak Window check-in points and lock your BOGO ticket incentive for this visit.</p>
+      <div class="peak-actions">
+        <button id="claimPeakOffer" class="btn btn-primary" type="button">Claim Peak Window BOGO</button>
+        <button id="closePeakOffer" class="btn btn-ghost" type="button">Maybe Later</button>
+      </div>
+    </div>
+  </section>
+
   <script>
     const STORAGE_KEY = 'cut-theatre-customer-wallet-v1';
+    const PEAK_OFFER_SEEN_KEY = 'cut-theatre-peak-offer-seen-v1';
     const STARTING_STATE = {
       points: 1200,
       visits: 8,
@@ -767,7 +793,10 @@
       installTitle: document.getElementById('installTitle'),
       installSubtitle: document.getElementById('installSubtitle'),
       installSteps: document.getElementById('installSteps'),
-      closeInstallHelp: document.getElementById('closeInstallHelp')
+      closeInstallHelp: document.getElementById('closeInstallHelp'),
+      peakOfferModal: document.getElementById('peakOfferModal'),
+      claimPeakOffer: document.getElementById('claimPeakOffer'),
+      closePeakOffer: document.getElementById('closePeakOffer')
     };
 
     let installPromptEvent = null;
@@ -1065,6 +1094,27 @@
       }
     });
 
+    refs.claimPeakOffer.addEventListener('click', () => {
+      earnPoints(150, 'Peak Window Check-in');
+      addHistory('BOGO ticket offer unlocked for Peak Window visit');
+      setStatus('Peak Window bonus claimed. BOGO movie ticket offer unlocked to help avoid US-380 traffic.', 'good');
+      render();
+      refs.peakOfferModal.hidden = true;
+      localStorage.setItem(PEAK_OFFER_SEEN_KEY, 'true');
+    });
+
+    refs.closePeakOffer.addEventListener('click', () => {
+      refs.peakOfferModal.hidden = true;
+      localStorage.setItem(PEAK_OFFER_SEEN_KEY, 'true');
+    });
+
+    refs.peakOfferModal.addEventListener('click', (event) => {
+      if (event.target === refs.peakOfferModal) {
+        refs.peakOfferModal.hidden = true;
+        localStorage.setItem(PEAK_OFFER_SEEN_KEY, 'true');
+      }
+    });
+
     refs.installBtn.addEventListener('click', async () => {
       if (!installPromptEvent) {
         showInstallHelp();
@@ -1097,6 +1147,10 @@
 
     render();
     restartAutoSync();
+
+    if (!localStorage.getItem(PEAK_OFFER_SEEN_KEY)) {
+      refs.peakOfferModal.hidden = false;
+    }
   </script>
 </body>
 </html>
