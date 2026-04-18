@@ -1,14 +1,12 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#0d1b2a" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="CUT Rewards" />
-  <link rel="manifest" href="manifest.webmanifest" />
-  <link rel="apple-touch-icon" href="icon-192.svg" />
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0d1b2a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="CUT Rewards">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icon-192.svg">
   <title>CUT Theatre Rewards</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@500;700;800&display=swap');
@@ -60,6 +58,14 @@
       padding-bottom: 5.8rem;
     }
 
+    .app.view-mobile {
+      max-width: 430px;
+    }
+
+    .app.view-browser {
+      max-width: 1220px;
+    }
+
     .hero {
       position: relative;
       background:
@@ -87,6 +93,31 @@
       opacity: 0.35;
       filter: blur(16px);
       pointer-events: none;
+    }
+
+    .hero-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+
+    .view-toggle {
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      background: rgba(50, 10, 10, 0.3);
+      color: #fff;
+      border-radius: 999px;
+      padding: 0.36rem 0.72rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.2s ease;
+    }
+
+    .view-toggle:hover {
+      background: rgba(50, 10, 10, 0.5);
     }
 
     .hero h1 {
@@ -632,15 +663,43 @@
         width: 100%;
         max-width: 500px;
       }
+
+      .app.view-mobile .content {
+        grid-template-columns: 1fr;
+        gap: 0.9rem;
+      }
+
+      .app.view-mobile .wallet-top {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .app.view-mobile .actions {
+        grid-template-columns: 1fr;
+      }
+
+      .app.view-mobile .pos-actions {
+        grid-template-columns: 1fr;
+      }
+
+      .app.view-mobile .bottom-actions {
+        grid-template-columns: 1fr;
+      }
+
+      .app.view-mobile .hero-top {
+        flex-wrap: wrap;
+      }
     }
   </style>
 </head>
 <body>
   <main class="app" id="cut-customer-loyalty-app" aria-label="CUT Theatre customer rewards app">
     <section class="hero">
-      <h1>CUT Theatre Rewards</h1>
+      <div class="hero-top">
+        <h1>CUT Theatre Rewards</h1>
+        <button id="viewToggleBtn" class="view-toggle" type="button">Mobile View</button>
+      </div>
       <p>CUT! Customer loyalty app for earning points, redeeming incentives and bonuses! Leave the 380 traffic behind. CUT is not just a theater - it's a restaurant experience.</p>
-      <img class="hero-visual" src="./cinema-graphic.svg" alt="Movie reel, drink, and popcorn graphic" />
+      <img class="hero-visual" src="./cinema-graphic.svg" alt="Movie reel, drink, and popcorn graphic">
       <div class="social-row" aria-label="CUT Theatre social media links">
         <a class="social-btn" href="https://instagram.com/cinemark/" target="_blank" rel="noopener noreferrer">Instagram</a>
         <a class="social-btn" href="https://facebook.com/cinemark" target="_blank" rel="noopener noreferrer">Facebook</a>
@@ -661,7 +720,7 @@
             </div>
             <div class="metric">
               <span class="k">Tier</span>
-              <span class="v" id="tierValue">Gold</span>
+              <span class="v" id="tierValue">Silver</span>
             </div>
             <div class="metric">
               <span class="k">Visits</span>
@@ -767,9 +826,7 @@
         </div>
 
         <div class="hint">Recent activity</div>
-        <ul id="historyList" class="history-list">
-          <li class="history-item">No activity yet.</li>
-        </ul>
+        <ul id="historyList" class="history-list"><li class="history-item">No activity yet.</li></ul>
       </article>
     </section>
   </main>
@@ -780,7 +837,7 @@
     <button id="resetBtn" class="btn btn-ghost" type="button">Reset Wallet</button>
   </section>
 
-  <section id="installHelp" class="install-help" hidden aria-label="Install instructions">
+  <section id="installHelp" class="install-help" hidden="" aria-label="Install instructions">
     <div class="install-card">
       <h3 id="installTitle">Install CUT Rewards</h3>
       <p id="installSubtitle">Use your browser menu to add this app to your home screen.</p>
@@ -791,7 +848,7 @@
     </div>
   </section>
 
-  <section id="peakOfferModal" class="peak-offer" hidden aria-label="Peak Window Incentive Offer">
+  <section id="peakOfferModal" class="peak-offer" aria-label="Peak Window Incentive Offer">
     <div class="peak-card">
       <h3 class="peak-title">Skip US-380 Rush: Peak Window Bonus</h3>
       <p class="peak-copy">Check in during the 4-7 PM Peak Window and enjoy faster flow at CUT with your loyalty bonus.</p>
@@ -804,7 +861,7 @@
     </div>
   </section>
 
-  <section id="shareMenu" class="share-menu" hidden aria-label="Share options">
+  <section id="shareMenu" class="share-menu" hidden="" aria-label="Share options">
     <div class="share-card">
       <h3>Share CUT Rewards</h3>
       <p>Choose how you want to send this app to friends and family.</p>
@@ -818,6 +875,7 @@
   </section>
 
   <script>
+    const VIEW_MODE_KEY = 'cut-view-mode';
     const STORAGE_KEY = 'cut-theatre-customer-wallet-v1';
     const PEAK_OFFER_SEEN_KEY = 'cut-theatre-peak-offer-seen-v1';
     const STARTING_STATE = {
@@ -836,6 +894,8 @@
     };
 
     const refs = {
+      app: document.getElementById('cut-customer-loyalty-app'),
+      viewToggleBtn: document.getElementById('viewToggleBtn'),
       pointsValue: document.getElementById('pointsValue'),
       tierValue: document.getElementById('tierValue'),
       visitsValue: document.getElementById('visitsValue'),
@@ -863,7 +923,16 @@
 
     let installPromptEvent = null;
   let syncTimer = null;
+    let viewMode = localStorage.getItem(VIEW_MODE_KEY) || 'browser';
     let state = loadState();
+
+    function applyViewMode(mode) {
+      viewMode = mode;
+      refs.app.classList.remove('view-mobile', 'view-browser');
+      refs.app.classList.add(mode === 'mobile' ? 'view-mobile' : 'view-browser');
+      refs.viewToggleBtn.textContent = mode === 'mobile' ? 'Browser View' : 'Mobile View';
+      localStorage.setItem(VIEW_MODE_KEY, mode);
+    }
 
     function loadState() {
       try {
@@ -1140,6 +1209,10 @@
       restartAutoSync();
     });
 
+    refs.viewToggleBtn.addEventListener('click', () => {
+      applyViewMode(viewMode === 'mobile' ? 'browser' : 'mobile');
+    });
+
     window.addEventListener('beforeinstallprompt', (event) => {
       event.preventDefault();
       installPromptEvent = event;
@@ -1252,6 +1325,7 @@
       });
     }
 
+    applyViewMode(viewMode);
     render();
     restartAutoSync();
 
@@ -1259,5 +1333,6 @@
       refs.peakOfferModal.hidden = false;
     }
   </script>
+
 </body>
 </html>
