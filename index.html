@@ -52,6 +52,7 @@
     }
 
     .hero {
+      position: relative;
       background:
         linear-gradient(120deg, rgba(246, 107, 45, 0.96), rgba(211, 78, 31, 0.96)),
         repeating-linear-gradient(
@@ -64,6 +65,42 @@
       color: #fff;
       padding: 1rem;
       animation: fade-down 0.28s ease;
+    }
+
+    .hero-art {
+      position: absolute;
+      right: 0.8rem;
+      top: 0.7rem;
+      display: flex;
+      gap: 0.35rem;
+      opacity: 0.9;
+      pointer-events: none;
+    }
+
+    .movie-glyph {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      display: grid;
+      place-items: center;
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .movie-glyph.ticket {
+      transform: rotate(-12deg);
+    }
+
+    .movie-glyph.reel {
+      border-radius: 999px;
+      transform: rotate(8deg);
+    }
+
+    .movie-glyph.pop {
+      transform: rotate(-4deg);
     }
 
     .hero h1 {
@@ -350,6 +387,55 @@
       font-size: 0.8rem;
     }
 
+    .pos-grid {
+      display: grid;
+      gap: 0.55rem;
+    }
+
+    .pos-grid label {
+      font-size: 0.79rem;
+      font-weight: 700;
+      color: #334664;
+      display: block;
+      margin-bottom: 0.18rem;
+    }
+
+    .pos-grid input {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      padding: 0.5rem 0.58rem;
+      font-size: 0.86rem;
+      color: var(--ink);
+    }
+
+    .pos-grid input:focus {
+      outline: none;
+      border-color: var(--accent-2);
+      box-shadow: 0 0 0 3px rgba(23, 135, 255, 0.14);
+    }
+
+    .pos-actions {
+      display: grid;
+      gap: 0.45rem;
+      grid-template-columns: 1fr;
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-size: 0.82rem;
+      color: #32445f;
+      margin-top: 0.1rem;
+    }
+
+    .subtle {
+      margin-top: 0.2rem;
+      color: #516583;
+      font-size: 0.78rem;
+    }
+
     @keyframes fade-down {
       from {
         opacity: 0;
@@ -380,6 +466,10 @@
         font-size: 0.92rem;
       }
 
+      .hero-art {
+        right: 1rem;
+      }
+
       .hero-buttons {
         grid-template-columns: auto auto;
         justify-content: start;
@@ -392,12 +482,21 @@
       .wallet-top {
         grid-template-columns: repeat(4, minmax(0, 1fr));
       }
+
+      .pos-actions {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
     }
   </style>
 </head>
 <body>
   <main class="app" id="cut-customer-loyalty-app" aria-label="CUT Theatre customer rewards app">
     <section class="hero">
+      <div class="hero-art" aria-hidden="true">
+        <div class="movie-glyph ticket">TIX</div>
+        <div class="movie-glyph reel">FILM</div>
+        <div class="movie-glyph pop">POP</div>
+      </div>
       <h1>CUT Theatre Rewards</h1>
       <p>Customer loyalty app for earning points, redeeming incentives, and installing to your phone home screen.</p>
       <div class="hero-buttons">
@@ -468,6 +567,30 @@
       </article>
 
       <article class="panel">
+        <h2>POS Auto Sync</h2>
+        <div class="pos-grid">
+          <div>
+            <label for="posEndpoint">POS API endpoint</label>
+            <input id="posEndpoint" type="text" placeholder="https://pos.example.com/loyalty/purchases" />
+          </div>
+          <div>
+            <label for="posApiKey">POS API key (optional)</label>
+            <input id="posApiKey" type="password" placeholder="Enter secure API key" />
+          </div>
+          <label class="toggle-row">
+            <input id="posAutoSync" type="checkbox" checked />
+            Auto sync purchases every 30 seconds
+          </label>
+          <div class="pos-actions">
+            <button id="posConnectBtn" class="btn btn-primary" type="button">Connect POS</button>
+            <button id="posSyncBtn" class="btn btn-ghost" type="button">Sync Purchases</button>
+            <button id="posDemoBtn" class="btn btn-ghost" type="button">Simulate POS Sale</button>
+          </div>
+          <div class="subtle" id="posLastSync">Last sync: not yet connected.</div>
+        </div>
+      </article>
+
+      <article class="panel">
         <h2>Incentives and Redemption</h2>
         <div class="offers" aria-label="Available loyalty incentives">
           <article class="offer">
@@ -532,12 +655,20 @@
 
   <script>
     const STORAGE_KEY = 'cut-theatre-customer-wallet-v1';
+    const POS_QUEUE_KEY = 'cut-pos-demo-queue-v1';
     const STARTING_STATE = {
       points: 1200,
       visits: 8,
       streakWeeks: 3,
       tier: 'Gold',
-      history: []
+      history: [],
+      posConfig: {
+        endpoint: 'demo://cut-pos',
+        apiKey: '',
+        autoSync: true,
+        lastSync: ''
+      },
+      processedPosIds: []
     };
 
     const refs = {
@@ -548,6 +679,13 @@
       statusBox: document.getElementById('statusBox'),
       historyList: document.getElementById('historyList'),
       resetBtn: document.getElementById('resetBtn'),
+      posEndpoint: document.getElementById('posEndpoint'),
+      posApiKey: document.getElementById('posApiKey'),
+      posAutoSync: document.getElementById('posAutoSync'),
+      posConnectBtn: document.getElementById('posConnectBtn'),
+      posSyncBtn: document.getElementById('posSyncBtn'),
+      posDemoBtn: document.getElementById('posDemoBtn'),
+      posLastSync: document.getElementById('posLastSync'),
       installBtn: document.getElementById('installBtn'),
       installHelp: document.getElementById('installHelp'),
       installTitle: document.getElementById('installTitle'),
@@ -557,6 +695,7 @@
     };
 
     let installPromptEvent = null;
+  let syncTimer = null;
     let state = loadState();
 
     function loadState() {
@@ -565,7 +704,16 @@
         if (!saved) {
           return { ...STARTING_STATE };
         }
-        return { ...STARTING_STATE, ...JSON.parse(saved) };
+        const parsed = JSON.parse(saved);
+        return {
+          ...STARTING_STATE,
+          ...parsed,
+          posConfig: {
+            ...STARTING_STATE.posConfig,
+            ...(parsed.posConfig || {})
+          },
+          processedPosIds: Array.isArray(parsed.processedPosIds) ? parsed.processedPosIds : []
+        };
       } catch {
         return { ...STARTING_STATE };
       }
@@ -630,8 +778,128 @@
       refs.tierValue.textContent = state.tier;
       refs.visitsValue.textContent = String(state.visits);
       refs.streakValue.textContent = `${state.streakWeeks} wk`;
+      refs.posEndpoint.value = state.posConfig.endpoint || '';
+      refs.posApiKey.value = state.posConfig.apiKey || '';
+      refs.posAutoSync.checked = Boolean(state.posConfig.autoSync);
+      refs.posLastSync.textContent = state.posConfig.lastSync
+        ? `Last sync: ${state.posConfig.lastSync}`
+        : 'Last sync: not yet connected.';
       renderHistory();
       saveState();
+    }
+
+    function addDemoPosPurchase() {
+      const queue = JSON.parse(localStorage.getItem(POS_QUEUE_KEY) || '[]');
+      const templates = [
+        { category: 'ticket', amount: 13.5, label: '2D Ticket' },
+        { category: 'ticket', amount: 18, label: 'IMAX Ticket' },
+        { category: 'concession', amount: 9.25, label: 'Combo Snack' },
+        { category: 'concession', amount: 6.5, label: 'Popcorn' }
+      ];
+      const selected = templates[Math.floor(Math.random() * templates.length)];
+      queue.push({
+        id: `demo-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+        category: selected.category,
+        label: selected.label,
+        amount: selected.amount,
+        timestamp: new Date().toISOString()
+      });
+      localStorage.setItem(POS_QUEUE_KEY, JSON.stringify(queue));
+    }
+
+    function calculatePosPoints(purchase) {
+      if (typeof purchase.points === 'number') {
+        return Math.max(0, Math.round(purchase.points));
+      }
+      const amount = Number(purchase.amount || 0);
+      let points = Math.round(amount * 10);
+      if (purchase.category === 'ticket') {
+        points += 40;
+      }
+      if (purchase.category === 'concession') {
+        points += 20;
+      }
+      return Math.max(points, 25);
+    }
+
+    function applyPosPurchases(purchases) {
+      let appliedCount = 0;
+      purchases.forEach((purchase) => {
+        const id = String(purchase.id || '');
+        if (!id || state.processedPosIds.includes(id)) {
+          return;
+        }
+        const points = calculatePosPoints(purchase);
+        state.points += points;
+        if (purchase.category === 'ticket') {
+          state.visits += 1;
+        }
+        state.processedPosIds.push(id);
+        state.processedPosIds = state.processedPosIds.slice(-150);
+        addHistory(`POS sync: +${points} pts from ${purchase.label || purchase.category || 'purchase'}`);
+        appliedCount += 1;
+      });
+      return appliedCount;
+    }
+
+    async function fetchPosPurchases() {
+      const endpoint = (state.posConfig.endpoint || '').trim();
+      if (!endpoint) {
+        throw new Error('POS endpoint is required.');
+      }
+
+      if (endpoint.toLowerCase().startsWith('demo://')) {
+        const queue = JSON.parse(localStorage.getItem(POS_QUEUE_KEY) || '[]');
+        localStorage.removeItem(POS_QUEUE_KEY);
+        return queue;
+      }
+
+      const headers = { 'Accept': 'application/json' };
+      if (state.posConfig.apiKey) {
+        headers['X-Api-Key'] = state.posConfig.apiKey;
+      }
+
+      const response = await fetch(endpoint, { headers });
+      if (!response.ok) {
+        throw new Error(`POS endpoint error (${response.status}).`);
+      }
+
+      const payload = await response.json();
+      if (Array.isArray(payload)) {
+        return payload;
+      }
+      if (Array.isArray(payload.purchases)) {
+        return payload.purchases;
+      }
+      return [];
+    }
+
+    async function syncPosPurchases(manual = false) {
+      try {
+        const purchases = await fetchPosPurchases();
+        const added = applyPosPurchases(purchases);
+        state.posConfig.lastSync = new Date().toLocaleString();
+        if (added > 0) {
+          setStatus(`POS sync complete. ${added} purchase(s) added to loyalty points.`, 'good');
+        } else if (manual) {
+          setStatus('POS sync complete. No new purchases found.');
+        }
+        render();
+      } catch (error) {
+        setStatus(`POS sync failed: ${error.message}`, 'bad');
+      }
+    }
+
+    function restartAutoSync() {
+      if (syncTimer) {
+        clearInterval(syncTimer);
+      }
+      if (!state.posConfig.autoSync) {
+        return;
+      }
+      syncTimer = setInterval(() => {
+        syncPosPurchases(false);
+      }, 30000);
     }
 
     function isIosSafari() {
@@ -724,6 +992,29 @@
       state = { ...STARTING_STATE, history: [] };
       setStatus('Wallet reset complete. Start earning new points now.');
       render();
+      restartAutoSync();
+    });
+
+    refs.posConnectBtn.addEventListener('click', () => {
+      state.posConfig.endpoint = refs.posEndpoint.value.trim();
+      state.posConfig.apiKey = refs.posApiKey.value.trim();
+      state.posConfig.autoSync = refs.posAutoSync.checked;
+      saveState();
+      restartAutoSync();
+      setStatus('POS configuration saved. Auto sync is active for new purchases.', 'good');
+    });
+
+    refs.posSyncBtn.addEventListener('click', () => {
+      state.posConfig.endpoint = refs.posEndpoint.value.trim();
+      state.posConfig.apiKey = refs.posApiKey.value.trim();
+      state.posConfig.autoSync = refs.posAutoSync.checked;
+      syncPosPurchases(true);
+      restartAutoSync();
+    });
+
+    refs.posDemoBtn.addEventListener('click', () => {
+      addDemoPosPurchase();
+      setStatus('Demo POS sale queued. Auto sync or manual sync will add points.');
     });
 
     window.addEventListener('beforeinstallprompt', (event) => {
@@ -773,6 +1064,7 @@
     }
 
     render();
+    restartAutoSync();
   </script>
 </body>
 </html>
