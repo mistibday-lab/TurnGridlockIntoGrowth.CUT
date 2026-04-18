@@ -11,18 +11,20 @@
   <link rel="apple-touch-icon" href="icon-192.svg" />
   <title>CUT Theatre Rewards</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@500;700;800&display=swap');
+
     :root {
-      --ink: #122035;
-      --muted: #5d6c84;
-      --card: #f8fbff;
-      --soft: #eaf2ff;
-      --line: #d4e0f4;
-      --accent: #f66b2d;
-      --accent-2: #1787ff;
+      --ink: #320909;
+      --muted: #6d3a3a;
+      --card: #fff8f5;
+      --soft: #ffe8e4;
+      --line: #f0b8b1;
+      --accent: #f82b2b;
+      --accent-2: #b51616;
       --success: #147a3b;
-      --danger: #b11f4a;
-      --deep: #0d1b2a;
-      --shadow: 0 15px 34px rgba(11, 24, 44, 0.2);
+      --danger: #8f1010;
+      --deep: #320404;
+      --shadow: 0 15px 34px rgba(70, 8, 8, 0.22);
     }
 
     * {
@@ -32,21 +34,27 @@
     body {
       margin: 0;
       min-height: 100vh;
-      font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+      font-family: "Nunito", "Trebuchet MS", sans-serif;
       color: var(--ink);
       background:
-        radial-gradient(circle at 10% 8%, rgba(246, 107, 45, 0.22), transparent 32%),
-        radial-gradient(circle at 92% 18%, rgba(23, 135, 255, 0.2), transparent 28%),
-        linear-gradient(150deg, #0d1b2a, #1e334f);
+        radial-gradient(circle at 10% 8%, rgba(255, 153, 80, 0.3), transparent 32%),
+        radial-gradient(circle at 92% 18%, rgba(255, 55, 55, 0.25), transparent 28%),
+        repeating-linear-gradient(
+          90deg,
+          #460909,
+          #460909 22px,
+          #570b0b 22px,
+          #570b0b 44px
+        );
       padding: 0.9rem;
     }
 
     .app {
       width: min(100%, 980px);
       margin: 0 auto;
-      border: 1px solid rgba(212, 224, 244, 0.6);
+      border: 1px solid rgba(240, 184, 177, 0.8);
       border-radius: 22px;
-      background: rgba(248, 251, 255, 0.98);
+      background: rgba(255, 248, 245, 0.98);
       box-shadow: var(--shadow);
       overflow: hidden;
       padding-bottom: 5.8rem;
@@ -55,7 +63,7 @@
     .hero {
       position: relative;
       background:
-        linear-gradient(120deg, rgba(246, 107, 45, 0.96), rgba(211, 78, 31, 0.96)),
+        linear-gradient(120deg, rgba(248, 43, 43, 0.96), rgba(156, 17, 17, 0.96)),
         repeating-linear-gradient(
           45deg,
           rgba(255, 255, 255, 0.09),
@@ -64,7 +72,7 @@
           transparent 28px
         );
       color: #fff;
-      padding: 1rem;
+      padding: 1rem 1rem 1.25rem;
       animation: fade-down 0.28s ease;
     }
 
@@ -75,7 +83,7 @@
       bottom: -24px;
       width: 116%;
       height: 44px;
-      background: linear-gradient(90deg, #ffe089, #ff9f5f, #ff75a0, #89d4ff, #9dffbe);
+      background: linear-gradient(90deg, #ffe9a4, #ff7b56, #ff4444, #ffc8a4, #fff0d3);
       opacity: 0.35;
       filter: blur(16px);
       pointer-events: none;
@@ -119,15 +127,26 @@
 
     .hero h1 {
       margin: 0;
-      font-size: 1.15rem;
-      letter-spacing: 0.02em;
+      font-family: "Bangers", "Trebuchet MS", cursive;
+      font-size: 1.7rem;
+      letter-spacing: 0.05em;
+      text-shadow: 0 4px 12px rgba(60, 0, 0, 0.4);
     }
 
     .hero p {
       margin: 0.4rem 0 0;
       opacity: 0.94;
       line-height: 1.35;
-      font-size: 0.88rem;
+      font-size: 0.92rem;
+      max-width: 72ch;
+    }
+
+    .hero-visual {
+      margin-top: 0.8rem;
+      width: min(230px, 62vw);
+      border-radius: 18px;
+      border: 2px solid rgba(255, 235, 225, 0.6);
+      box-shadow: 0 12px 24px rgba(53, 2, 2, 0.35);
     }
 
     .social-row {
@@ -149,14 +168,14 @@
       letter-spacing: 0.02em;
       color: #fff;
       border: 1px solid rgba(255, 255, 255, 0.34);
-      background: rgba(8, 20, 38, 0.24);
+      background: rgba(79, 8, 8, 0.28);
       backdrop-filter: blur(2px);
       transition: transform 0.15s ease, background 0.2s ease;
     }
 
     .social-btn:hover {
       transform: translateY(-1px);
-      background: rgba(8, 20, 38, 0.4);
+      background: rgba(79, 8, 8, 0.52);
     }
 
     .hero-buttons {
@@ -174,7 +193,7 @@
     }
 
     .panel {
-      background: linear-gradient(180deg, #ffffff, #f8fbff);
+      background: linear-gradient(180deg, #fffefe, #fff4f2);
       border: 1px solid var(--line);
       border-radius: 14px;
       padding: 0.9rem;
@@ -189,14 +208,14 @@
       width: 100%;
       height: 4px;
       border-radius: 14px 14px 0 0;
-      background: linear-gradient(90deg, #ff8b4a, #e95d7f, #498cff, #5ed4ad);
+      background: linear-gradient(90deg, #ff6767, #ff3434, #d01010, #ff9a6c);
       opacity: 0.6;
     }
 
     .panel h2 {
       margin: 0 0 0.65rem;
       font-size: 1.01rem;
-      color: #22314c;
+      color: #6e0f0f;
     }
 
     .wallet {
@@ -254,18 +273,18 @@
 
     .btn-primary {
       color: #fff;
-      background: linear-gradient(135deg, #1777ff, #1ca8ff);
+      background: linear-gradient(135deg, #ff3a3a, #cb1313);
     }
 
     .btn-ghost {
-      color: #103071;
-      background: #e6efff;
-      border: 1px solid #c7d8f9;
+      color: #6e0f0f;
+      background: #ffe6e2;
+      border: 1px solid #efbeb7;
     }
 
     .btn-install {
       color: #fff;
-      background: linear-gradient(135deg, #1948a5, #102b6c);
+      background: linear-gradient(135deg, #f72b2b, #a30f0f);
     }
 
     .actions {
@@ -296,14 +315,14 @@
       border: 0;
       border-radius: 9px;
       padding: 0.45rem 0.65rem;
-      background: #e7f0ff;
-      color: #0d3988;
+      background: #ffe2dd;
+      color: #7d1212;
       font-weight: 700;
       cursor: pointer;
     }
 
     .mini-btn:hover {
-      background: #d8e7ff;
+      background: #ffd0c7;
     }
 
     .offers {
@@ -313,8 +332,8 @@
 
     .offer {
       border-radius: 12px;
-      border: 1px dashed #b8cdf0;
-      background: linear-gradient(145deg, #fef6ff, #f2fbff);
+      border: 1px dashed #e79b92;
+      background: linear-gradient(145deg, #fff1ed, #fffbf5);
       padding: 0.7rem;
     }
 
@@ -340,8 +359,8 @@
 
     .chip {
       border-radius: 999px;
-      background: linear-gradient(145deg, #e2edff, #f1e7ff);
-      color: #163b79;
+      background: linear-gradient(145deg, #ffe6e2, #ffeecf);
+      color: #7d1212;
       font-size: 0.74rem;
       padding: 0.24rem 0.56rem;
       font-weight: 700;
@@ -350,10 +369,10 @@
     .status {
       margin-top: 0.45rem;
       border-radius: 10px;
-      border: 1px solid #d5e2f7;
-      background: #eff5ff;
+      border: 1px solid #efc2bb;
+      background: #fff0ed;
       padding: 0.6rem;
-      color: #2f4260;
+      color: #5b2828;
       font-size: 0.82rem;
       line-height: 1.35;
     }
@@ -462,12 +481,12 @@
       background:
         repeating-linear-gradient(
           90deg,
-          #1c2b46,
-          #1c2b46 12px,
-          #f6f0ff 12px,
-          #f6f0ff 20px
+          #651111,
+          #651111 12px,
+          #ffece5 12px,
+          #ffece5 20px
         );
-      border: 1px solid #d4dcef;
+      border: 1px solid #efc3ba;
       opacity: 0.8;
     }
 
@@ -480,7 +499,7 @@
       display: grid;
       gap: 0.55rem;
       padding: 0.7rem 0.85rem calc(0.7rem + env(safe-area-inset-bottom));
-      background: linear-gradient(180deg, rgba(13, 27, 42, 0.18), rgba(13, 27, 42, 0.86));
+      background: linear-gradient(180deg, rgba(65, 7, 7, 0.16), rgba(65, 7, 7, 0.9));
       backdrop-filter: blur(4px);
     }
 
@@ -518,11 +537,11 @@
       }
 
       .hero h1 {
-        font-size: 1.35rem;
+        font-size: 2.2rem;
       }
 
       .hero p {
-        font-size: 0.92rem;
+        font-size: 0.99rem;
       }
 
       .hero-art {
@@ -567,6 +586,7 @@
       </div>
       <h1>CUT Theatre Rewards</h1>
       <p>CUT! Customer loyalty app for earning points, redeeming incentives and bonuses! Leave the 380 traffic behind. CUT is not just a theater - it's a restaurant experience.</p>
+      <img class="hero-visual" src="./cinema-graphic.svg" alt="Movie reel, drink, and popcorn graphic" />
       <div class="social-row" aria-label="CUT Theatre social media links">
         <a class="social-btn" href="https://www.instagram.com" target="_blank" rel="noopener noreferrer">Instagram</a>
         <a class="social-btn" href="https://www.facebook.com" target="_blank" rel="noopener noreferrer">Facebook</a>
