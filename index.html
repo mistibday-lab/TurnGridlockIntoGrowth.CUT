@@ -734,6 +734,7 @@
 
   <section class="bottom-actions" aria-label="Primary app actions">
     <button id="installBtn" class="btn btn-install" type="button">Install on Phone</button>
+    <button id="shareBtn" class="btn btn-primary" type="button">Share App</button>
     <button id="resetBtn" class="btn btn-ghost" type="button">Reset Wallet</button>
   </section>
 
@@ -788,6 +789,7 @@
       historyList: document.getElementById('historyList'),
       resetBtn: document.getElementById('resetBtn'),
       posSyncBtn: document.getElementById('posSyncBtn'),
+      shareBtn: document.getElementById('shareBtn'),
       installBtn: document.getElementById('installBtn'),
       installHelp: document.getElementById('installHelp'),
       installTitle: document.getElementById('installTitle'),
@@ -1133,6 +1135,37 @@
         }
       }
       installPromptEvent = null;
+    });
+
+    refs.shareBtn.addEventListener('click', async () => {
+      const shareData = {
+        title: 'CUT Theatre Rewards',
+        text: 'Earn points and claim Peak Window BOGO offers at CUT Theatre Rewards.',
+        url: window.location.href
+      };
+
+      if (navigator.share) {
+        try {
+          await navigator.share(shareData);
+          setStatus('Thanks for sharing CUT Rewards.', 'good');
+          return;
+        } catch {
+          // If user dismisses native share sheet, silently continue to fallback.
+        }
+      }
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        try {
+          await navigator.clipboard.writeText(shareData.url);
+          setStatus('Share link copied to clipboard.');
+          return;
+        } catch {
+          setStatus('Share not available right now. Please copy the URL from your browser.', 'bad');
+          return;
+        }
+      }
+
+      setStatus('Share not available on this device. Please copy the URL from your browser.');
     });
 
     window.addEventListener('appinstalled', () => {
