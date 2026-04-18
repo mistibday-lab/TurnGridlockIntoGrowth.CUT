@@ -1,0 +1,21 @@
+{
+  "name": "CUT Theatre Rewards",
+  "short_name": "CUT Rewards",
+  "description": "Customer loyalty app for CUT Theatre points and incentives.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0d1b2a",
+  "theme_color": "#0d1b2a",
+  "icons": [
+    {
+      "src": "./icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "./icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}

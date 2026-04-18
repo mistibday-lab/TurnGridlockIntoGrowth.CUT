@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#0d1b2a" />
+  <circle cx="256" cy="220" r="116" fill="#f66b2d" />
+  <path d="M166 350h180v38H166z" fill="#1787ff" />
+  <text x="256" y="242" text-anchor="middle" font-family="Trebuchet MS, Segoe UI, sans-serif" font-size="92" font-weight="700" fill="#ffffff">CUT</text>
+</svg>
