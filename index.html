@@ -49,6 +49,7 @@
       background: rgba(248, 251, 255, 0.98);
       box-shadow: var(--shadow);
       overflow: hidden;
+      padding-bottom: 5.8rem;
     }
 
     .hero {
@@ -67,6 +68,19 @@
       animation: fade-down 0.28s ease;
     }
 
+    .hero::after {
+      content: '';
+      position: absolute;
+      left: -8%;
+      bottom: -24px;
+      width: 116%;
+      height: 44px;
+      background: linear-gradient(90deg, #ffe089, #ff9f5f, #ff75a0, #89d4ff, #9dffbe);
+      opacity: 0.35;
+      filter: blur(16px);
+      pointer-events: none;
+    }
+
     .hero-art {
       position: absolute;
       right: 0.8rem;
@@ -81,7 +95,7 @@
       width: 40px;
       height: 40px;
       border-radius: 10px;
-      background: rgba(255, 255, 255, 0.2);
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.32), rgba(255, 255, 255, 0.14));
       border: 1px solid rgba(255, 255, 255, 0.35);
       display: grid;
       place-items: center;
@@ -121,6 +135,7 @@
       display: grid;
       gap: 0.5rem;
       grid-template-columns: 1fr;
+      display: none;
     }
 
     .content {
@@ -130,10 +145,23 @@
     }
 
     .panel {
-      background: var(--card);
+      background: linear-gradient(180deg, #ffffff, #f8fbff);
       border: 1px solid var(--line);
       border-radius: 14px;
       padding: 0.9rem;
+      position: relative;
+    }
+
+    .panel::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 4px;
+      border-radius: 14px 14px 0 0;
+      background: linear-gradient(90deg, #ff8b4a, #e95d7f, #498cff, #5ed4ad);
+      opacity: 0.6;
     }
 
     .panel h2 {
@@ -256,8 +284,8 @@
 
     .offer {
       border-radius: 12px;
-      border: 1px dashed #bfd2ef;
-      background: #f7fbff;
+      border: 1px dashed #b8cdf0;
+      background: linear-gradient(145deg, #fef6ff, #f2fbff);
       padding: 0.7rem;
     }
 
@@ -283,8 +311,8 @@
 
     .chip {
       border-radius: 999px;
-      background: #e7efff;
-      color: #153977;
+      background: linear-gradient(145deg, #e2edff, #f1e7ff);
+      color: #163b79;
       font-size: 0.74rem;
       padding: 0.24rem 0.56rem;
       font-weight: 700;
@@ -421,6 +449,40 @@
       grid-template-columns: 1fr;
     }
 
+    .movie-divider {
+      margin-top: 0.4rem;
+      height: 14px;
+      border-radius: 999px;
+      background:
+        repeating-linear-gradient(
+          90deg,
+          #1c2b46,
+          #1c2b46 12px,
+          #f6f0ff 12px,
+          #f6f0ff 20px
+        );
+      border: 1px solid #d4dcef;
+      opacity: 0.8;
+    }
+
+    .bottom-actions {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 15;
+      display: grid;
+      gap: 0.55rem;
+      padding: 0.7rem 0.85rem calc(0.7rem + env(safe-area-inset-bottom));
+      background: linear-gradient(180deg, rgba(13, 27, 42, 0.18), rgba(13, 27, 42, 0.86));
+      backdrop-filter: blur(4px);
+    }
+
+    .bottom-actions .btn {
+      width: min(980px, 100%);
+      margin: 0 auto;
+    }
+
     .toggle-row {
       display: flex;
       align-items: center;
@@ -486,6 +548,15 @@
       .pos-actions {
         grid-template-columns: repeat(3, minmax(0, 1fr));
       }
+
+      .bottom-actions {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .bottom-actions .btn {
+        width: 100%;
+        max-width: 500px;
+      }
     }
   </style>
 </head>
@@ -499,10 +570,7 @@
       </div>
       <h1>CUT Theatre Rewards</h1>
       <p>Customer loyalty app for earning points, redeeming incentives, and installing to your phone home screen.</p>
-      <div class="hero-buttons">
-        <button id="installBtn" class="btn btn-install" type="button">Install on Phone</button>
-        <button id="resetBtn" class="btn btn-ghost" type="button">Reset Wallet</button>
-      </div>
+      <div class="hero-buttons"></div>
     </section>
 
     <section class="content">
@@ -582,11 +650,10 @@
             Auto sync purchases every 30 seconds
           </label>
           <div class="pos-actions">
-            <button id="posConnectBtn" class="btn btn-primary" type="button">Connect POS</button>
             <button id="posSyncBtn" class="btn btn-ghost" type="button">Sync Purchases</button>
-            <button id="posDemoBtn" class="btn btn-ghost" type="button">Simulate POS Sale</button>
           </div>
           <div class="subtle" id="posLastSync">Last sync: not yet connected.</div>
+          <div class="movie-divider" aria-hidden="true"></div>
         </div>
       </article>
 
@@ -642,6 +709,11 @@
     </section>
   </main>
 
+  <section class="bottom-actions" aria-label="Primary app actions">
+    <button id="installBtn" class="btn btn-install" type="button">Install on Phone</button>
+    <button id="resetBtn" class="btn btn-ghost" type="button">Reset Wallet</button>
+  </section>
+
   <section id="installHelp" class="install-help" hidden aria-label="Install instructions">
     <div class="install-card">
       <h3 id="installTitle">Install CUT Rewards</h3>
@@ -655,7 +727,6 @@
 
   <script>
     const STORAGE_KEY = 'cut-theatre-customer-wallet-v1';
-    const POS_QUEUE_KEY = 'cut-pos-demo-queue-v1';
     const STARTING_STATE = {
       points: 1200,
       visits: 8,
@@ -682,9 +753,7 @@
       posEndpoint: document.getElementById('posEndpoint'),
       posApiKey: document.getElementById('posApiKey'),
       posAutoSync: document.getElementById('posAutoSync'),
-      posConnectBtn: document.getElementById('posConnectBtn'),
       posSyncBtn: document.getElementById('posSyncBtn'),
-      posDemoBtn: document.getElementById('posDemoBtn'),
       posLastSync: document.getElementById('posLastSync'),
       installBtn: document.getElementById('installBtn'),
       installHelp: document.getElementById('installHelp'),
@@ -788,25 +857,6 @@
       saveState();
     }
 
-    function addDemoPosPurchase() {
-      const queue = JSON.parse(localStorage.getItem(POS_QUEUE_KEY) || '[]');
-      const templates = [
-        { category: 'ticket', amount: 13.5, label: '2D Ticket' },
-        { category: 'ticket', amount: 18, label: 'IMAX Ticket' },
-        { category: 'concession', amount: 9.25, label: 'Combo Snack' },
-        { category: 'concession', amount: 6.5, label: 'Popcorn' }
-      ];
-      const selected = templates[Math.floor(Math.random() * templates.length)];
-      queue.push({
-        id: `demo-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
-        category: selected.category,
-        label: selected.label,
-        amount: selected.amount,
-        timestamp: new Date().toISOString()
-      });
-      localStorage.setItem(POS_QUEUE_KEY, JSON.stringify(queue));
-    }
-
     function calculatePosPoints(purchase) {
       if (typeof purchase.points === 'number') {
         return Math.max(0, Math.round(purchase.points));
@@ -849,9 +899,7 @@
       }
 
       if (endpoint.toLowerCase().startsWith('demo://')) {
-        const queue = JSON.parse(localStorage.getItem(POS_QUEUE_KEY) || '[]');
-        localStorage.removeItem(POS_QUEUE_KEY);
-        return queue;
+        return [];
       }
 
       const headers = { 'Accept': 'application/json' };
@@ -995,26 +1043,12 @@
       restartAutoSync();
     });
 
-    refs.posConnectBtn.addEventListener('click', () => {
-      state.posConfig.endpoint = refs.posEndpoint.value.trim();
-      state.posConfig.apiKey = refs.posApiKey.value.trim();
-      state.posConfig.autoSync = refs.posAutoSync.checked;
-      saveState();
-      restartAutoSync();
-      setStatus('POS configuration saved. Auto sync is active for new purchases.', 'good');
-    });
-
     refs.posSyncBtn.addEventListener('click', () => {
       state.posConfig.endpoint = refs.posEndpoint.value.trim();
       state.posConfig.apiKey = refs.posApiKey.value.trim();
       state.posConfig.autoSync = refs.posAutoSync.checked;
       syncPosPurchases(true);
       restartAutoSync();
-    });
-
-    refs.posDemoBtn.addEventListener('click', () => {
-      addDemoPosPurchase();
-      setStatus('Demo POS sale queued. Auto sync or manual sync will add points.');
     });
 
     window.addEventListener('beforeinstallprompt', (event) => {
