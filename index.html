@@ -420,29 +420,6 @@
       gap: 0.55rem;
     }
 
-    .pos-grid label {
-      font-size: 0.79rem;
-      font-weight: 700;
-      color: #334664;
-      display: block;
-      margin-bottom: 0.18rem;
-    }
-
-    .pos-grid input {
-      width: 100%;
-      border: 1px solid var(--line);
-      border-radius: 9px;
-      padding: 0.5rem 0.58rem;
-      font-size: 0.86rem;
-      color: var(--ink);
-    }
-
-    .pos-grid input:focus {
-      outline: none;
-      border-color: var(--accent-2);
-      box-shadow: 0 0 0 3px rgba(23, 135, 255, 0.14);
-    }
-
     .pos-actions {
       display: grid;
       gap: 0.45rem;
@@ -481,15 +458,6 @@
     .bottom-actions .btn {
       width: min(980px, 100%);
       margin: 0 auto;
-    }
-
-    .toggle-row {
-      display: flex;
-      align-items: center;
-      gap: 0.45rem;
-      font-size: 0.82rem;
-      color: #32445f;
-      margin-top: 0.1rem;
     }
 
     .subtle {
@@ -569,7 +537,7 @@
         <div class="movie-glyph pop">POP</div>
       </div>
       <h1>CUT Theatre Rewards</h1>
-      <p>Customer loyalty app for earning points, redeeming incentives, and installing to your phone home screen.</p>
+      <p>CUT! Customer loyalty app for earning points, redeeming incentives and bonuses! Leave the 380 traffic behind. CUT is not just a theater - it's a restaurant experience.</p>
       <div class="hero-buttons"></div>
     </section>
 
@@ -637,22 +605,10 @@
       <article class="panel">
         <h2>POS Auto Sync</h2>
         <div class="pos-grid">
-          <div>
-            <label for="posEndpoint">POS API endpoint</label>
-            <input id="posEndpoint" type="text" placeholder="https://pos.example.com/loyalty/purchases" />
-          </div>
-          <div>
-            <label for="posApiKey">POS API key (optional)</label>
-            <input id="posApiKey" type="password" placeholder="Enter secure API key" />
-          </div>
-          <label class="toggle-row">
-            <input id="posAutoSync" type="checkbox" checked />
-            Auto sync purchases every 30 seconds
-          </label>
+          <p class="subtle">Purchase syncing runs in the background. Use sync to refresh now.</p>
           <div class="pos-actions">
             <button id="posSyncBtn" class="btn btn-ghost" type="button">Sync Purchases</button>
           </div>
-          <div class="subtle" id="posLastSync">Last sync: not yet connected.</div>
           <div class="movie-divider" aria-hidden="true"></div>
         </div>
       </article>
@@ -750,11 +706,7 @@
       statusBox: document.getElementById('statusBox'),
       historyList: document.getElementById('historyList'),
       resetBtn: document.getElementById('resetBtn'),
-      posEndpoint: document.getElementById('posEndpoint'),
-      posApiKey: document.getElementById('posApiKey'),
-      posAutoSync: document.getElementById('posAutoSync'),
       posSyncBtn: document.getElementById('posSyncBtn'),
-      posLastSync: document.getElementById('posLastSync'),
       installBtn: document.getElementById('installBtn'),
       installHelp: document.getElementById('installHelp'),
       installTitle: document.getElementById('installTitle'),
@@ -847,12 +799,6 @@
       refs.tierValue.textContent = state.tier;
       refs.visitsValue.textContent = String(state.visits);
       refs.streakValue.textContent = `${state.streakWeeks} wk`;
-      refs.posEndpoint.value = state.posConfig.endpoint || '';
-      refs.posApiKey.value = state.posConfig.apiKey || '';
-      refs.posAutoSync.checked = Boolean(state.posConfig.autoSync);
-      refs.posLastSync.textContent = state.posConfig.lastSync
-        ? `Last sync: ${state.posConfig.lastSync}`
-        : 'Last sync: not yet connected.';
       renderHistory();
       saveState();
     }
@@ -1044,9 +990,6 @@
     });
 
     refs.posSyncBtn.addEventListener('click', () => {
-      state.posConfig.endpoint = refs.posEndpoint.value.trim();
-      state.posConfig.apiKey = refs.posApiKey.value.trim();
-      state.posConfig.autoSync = refs.posAutoSync.checked;
       syncPosPurchases(true);
       restartAutoSync();
     });
