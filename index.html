@@ -4,7 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#0d1b2a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="CUT Rewards" />
   <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="icon-192.svg" />
   <title>CUT Theatre Rewards</title>
   <style>
     :root {
@@ -272,6 +276,57 @@
       color: #7f1f41;
     }
 
+    .install-help {
+      position: fixed;
+      inset: 0;
+      background: rgba(7, 15, 29, 0.58);
+      display: grid;
+      place-items: center;
+      padding: 1rem;
+      z-index: 20;
+    }
+
+    .install-help[hidden] {
+      display: none;
+    }
+
+    .install-card {
+      width: min(100%, 420px);
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 0.95rem;
+      box-shadow: var(--shadow);
+    }
+
+    .install-card h3 {
+      margin: 0 0 0.45rem;
+      font-size: 1rem;
+      color: #1d2d48;
+    }
+
+    .install-card p {
+      margin: 0 0 0.55rem;
+      color: #44546f;
+      font-size: 0.85rem;
+      line-height: 1.4;
+    }
+
+    .install-steps {
+      margin: 0;
+      padding-left: 1rem;
+      color: #314461;
+      font-size: 0.84rem;
+      line-height: 1.4;
+    }
+
+    .install-actions {
+      margin-top: 0.75rem;
+      display: flex;
+      justify-content: end;
+      gap: 0.5rem;
+    }
+
     .hint {
       margin-top: 0.58rem;
       color: var(--muted);
@@ -346,7 +401,7 @@
       <h1>CUT Theatre Rewards</h1>
       <p>Customer loyalty app for earning points, redeeming incentives, and installing to your phone home screen.</p>
       <div class="hero-buttons">
-        <button id="installBtn" class="btn btn-install" type="button" hidden>Download App</button>
+        <button id="installBtn" class="btn btn-install" type="button">Install on Phone</button>
         <button id="resetBtn" class="btn btn-ghost" type="button">Reset Wallet</button>
       </div>
     </section>
@@ -464,6 +519,17 @@
     </section>
   </main>
 
+  <section id="installHelp" class="install-help" hidden aria-label="Install instructions">
+    <div class="install-card">
+      <h3 id="installTitle">Install CUT Rewards</h3>
+      <p id="installSubtitle">Use your browser menu to add this app to your home screen.</p>
+      <ol id="installSteps" class="install-steps"></ol>
+      <div class="install-actions">
+        <button id="closeInstallHelp" class="btn btn-ghost" type="button">Close</button>
+      </div>
+    </div>
+  </section>
+
   <script>
     const STORAGE_KEY = 'cut-theatre-customer-wallet-v1';
     const STARTING_STATE = {
@@ -482,7 +548,12 @@
       statusBox: document.getElementById('statusBox'),
       historyList: document.getElementById('historyList'),
       resetBtn: document.getElementById('resetBtn'),
-      installBtn: document.getElementById('installBtn')
+      installBtn: document.getElementById('installBtn'),
+      installHelp: document.getElementById('installHelp'),
+      installTitle: document.getElementById('installTitle'),
+      installSubtitle: document.getElementById('installSubtitle'),
+      installSteps: document.getElementById('installSteps'),
+      closeInstallHelp: document.getElementById('closeInstallHelp')
     };
 
     let installPromptEvent = null;
@@ -563,6 +634,55 @@
       saveState();
     }
 
+    function isIosSafari() {
+      const ua = navigator.userAgent || navigator.vendor || '';
+      const isIos = /iPhone|iPad|iPod/i.test(ua);
+      const isSafari = /Safari/i.test(ua) && !/CriOS|FxiOS|EdgiOS/i.test(ua);
+      return isIos && isSafari;
+    }
+
+    function isAndroid() {
+      return /Android/i.test(navigator.userAgent || '');
+    }
+
+    function showInstallHelp() {
+      let title = 'Install CUT Rewards';
+      let subtitle = 'Use your browser menu to add this app to your home screen.';
+      let steps = [
+        'Open browser menu',
+        'Choose Add to Home screen or Install app',
+        'Confirm install'
+      ];
+
+      if (isIosSafari()) {
+        title = 'Install on iPhone or iPad';
+        subtitle = 'Safari does not always show the install popup. Use Share to install.';
+        steps = [
+          'Tap Share in Safari',
+          'Scroll and tap Add to Home Screen',
+          'Tap Add to pin CUT Rewards on your phone'
+        ];
+      } else if (isAndroid()) {
+        title = 'Install on Android';
+        subtitle = 'If popup did not appear, install from Chrome menu.';
+        steps = [
+          'Tap browser menu',
+          'Tap Install app or Add to Home screen',
+          'Tap Install'
+        ];
+      }
+
+      refs.installTitle.textContent = title;
+      refs.installSubtitle.textContent = subtitle;
+      refs.installSteps.innerHTML = '';
+      steps.forEach((step) => {
+        const li = document.createElement('li');
+        li.textContent = step;
+        refs.installSteps.appendChild(li);
+      });
+      refs.installHelp.hidden = false;
+    }
+
     function earnPoints(points, label) {
       state.points += points;
       if (label.includes('Ticket') || label.includes('Visit')) {
@@ -609,18 +729,41 @@
     window.addEventListener('beforeinstallprompt', (event) => {
       event.preventDefault();
       installPromptEvent = event;
-      refs.installBtn.hidden = false;
       setStatus('App install is available. Tap Download App to add CUT Rewards to your home screen.');
+    });
+
+    refs.closeInstallHelp.addEventListener('click', () => {
+      refs.installHelp.hidden = true;
+    });
+
+    refs.installHelp.addEventListener('click', (event) => {
+      if (event.target === refs.installHelp) {
+        refs.installHelp.hidden = true;
+      }
     });
 
     refs.installBtn.addEventListener('click', async () => {
       if (!installPromptEvent) {
-        setStatus('Install prompt is not available yet. Use browser menu and choose Add to Home Screen.');
+        showInstallHelp();
+        setStatus('Open browser menu and use Add to Home screen or Install app.');
         return;
       }
       await installPromptEvent.prompt();
+      if (installPromptEvent.userChoice) {
+        try {
+          const choice = await installPromptEvent.userChoice;
+          if (choice.outcome === 'accepted') {
+            setStatus('CUT Rewards installed successfully.', 'good');
+          }
+        } catch {
+          setStatus('Install prompt completed.');
+        }
+      }
       installPromptEvent = null;
-      refs.installBtn.hidden = true;
+    });
+
+    window.addEventListener('appinstalled', () => {
+      setStatus('App installed. CUT Rewards is now available from your home screen.', 'good');
     });
 
     if ('serviceWorker' in navigator) {
